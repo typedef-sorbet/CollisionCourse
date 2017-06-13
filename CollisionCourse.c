@@ -542,7 +542,7 @@ void engine()
 		{
 			wprintw(display, "\nThe engine on the far wall groans painfully, its gears seemingly stuck.\n");
 		}
-		wprintw(display, "/nTo the west is the cargo bay. Above you, there is a hatch to the electrical room./n");
+		wprintw(display, "\nTo the west is the cargo bay. Above you, there is a hatch to the electrical room.\n");
 		wrefresh(display);
 		wmove(textWindow, 1, 1);
 		wgetnstr(textWindow, command, 30);
@@ -594,6 +594,7 @@ void engine()
 						wprintw(display, "\nYou pour the slime onto the gears, allowing it to seep into every\nnook and cranny. The gears begin to croak to life, spinning\nhappily and getting the ship back on its metaphorical feet.\n");
 						removeItem("Cup w/ Slime");
 						addItem("Cup", "A small plastic cup. Good for holding things.");
+						engineWorking = TRUE;
 					}
 					else
 						wprintw(display, "\nYou don't need to mess with the engine anymore.\n");
@@ -780,6 +781,8 @@ void electrical()
 
 void drawInv()
 {
+	wclear(invWin);
+	wborder(invWin, '|', '|', '-', '-', '+', '+', '+', '+');
 	mvwprintw(invWin, 1, 1, "Inventory");
 	wmove(invWin, 3, 1);
 	int invCursor = 3;
