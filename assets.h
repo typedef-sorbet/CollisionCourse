@@ -11,7 +11,6 @@ typedef struct object
 typedef struct inventory
 {
    Item items[50]; //Array of 50 item objects
-   int gold;
    int numItems;
 } Inventory;
 
