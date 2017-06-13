@@ -31,9 +31,10 @@ int max_x, max_y;
 int display_y, display_x, text_y, text_x, map_y, map_x, inv_y, inv_x;
 
 //a BUNCH of gamestate flags
-bool cargoFirst = TRUE, engineFirst = TRUE, electricalFirst = TRUE, bedroomFirst = TRUE, controlFirst = TRUE, hatchFirst = TRUE, messHallFirst = TRUE, controlPanelFirst = TRUE;
+bool wireFirst = TRUE, cargoFirst = TRUE, engineFirst = TRUE, electricalFirst = TRUE, bedroomFirst = TRUE, controlFirst = TRUE, hatchFirst = TRUE, messHallFirst = TRUE, controlPanelFirst = TRUE;
 bool wirePanelFixed = FALSE, engineWorking = FALSE;
 bool engineHatchLocked = TRUE;
+bool firstWirePair = FALSE, secondWirePair = FALSE, thirdWirePair = FALSE, fourthWirePair = FALSE; 
 int batteryCharge = 0;
 
 //buffer for commands and text
@@ -186,7 +187,7 @@ void bedroom()
 					if(checkForItem("Cup") == -1)
 						wprintw(display, "\nAn empty plastic cup sits atop the metal nightstand.\n");
 					else
-						wprintw(display, "\nThe metal nightstand sits alone and empty next to the bed.\n"
+						wprintw(display, "\nThe metal nightstand sits alone and empty next to the bed.\n");
 				}
 				if(strstr(command, "cup") != NULL && checkForItem("Cup") == -1)
 				{
@@ -339,14 +340,14 @@ void wirePanel()
 {
 	wprintw(display, "\n");
 	drawMap(NULL, NULL, NULL, NULL, NULL, NULL);
-	//if(/*firstFlag*/)
-	//{
-	//	wprintw(display, "\nWIRE PANEL SKIP\n");
-	//	/*firstFlag*/ = FALSE;
-	//}
+	if(wireFirst)
+	{
+		wprintw(display, "\nWhen you pry off the panel covering the wires, you're greeted by two side panels\n that were once connected by insulated copper. Each side, left and right, has color coded wires.\nMany wires are disconnected from one another.\n");
+		wireFirst = FALSE;
+	}
 	while(1)
 	{
-		wprintw(display, "\nWIRE PANEL REGULAR\n");
+		wprintw(display, "\nThe wires are still not fully connected.\nUse the syntax \"C to A\" to connect the third wire on the left to the first wire on\nthe right, for example.\n");
 		wrefresh(display);
 		wmove(textWindow, 1, 1);
 		wgetnstr(textWindow, command, 30);
@@ -377,6 +378,40 @@ void wirePanel()
 				endwin();
 				exit(0);
 			default:		//additional checks
+				if(strstr(command, "exit") != NULL)
+					electrical();
+				if(strstr(command, "look") != NULL && strstr(command, "left") != NULL)
+					wprintw(display, "\nFrom top to bottom, the color codes are red, yellow, blue, green.\n");
+				if(strstr(command, "look") != NULL && strstr(command, "right") != NULL)
+					wprintw(display, "\nFrom top to bottom, the color codes are yellow, blue, red, green.\n");
+				if((command[0] == 'a' || command[0] == 'A') && (command[5] == 'c' || command[5] == 'C'))
+				{
+					wprintw(display, "\nConnected successfully.\n");
+					firstWirePair = TRUE;
+				}
+				else if((command[0] == 'b' || command[0] == 'B') && (command[5] == 'a' || command[5] == 'A'))
+				{
+					wprintw(display, "\nConnected successfully.\n");
+					secondWirePair = TRUE;
+				}
+				else if((command[0] == 'c' || command[0] == 'C') && (command[5] == 'b' || command[5] == 'B'))
+				{
+					wprintw(display, "\nConnected successfully.\n");
+					thirdWirePair = TRUE;
+				}
+				else if((command[0] == 'd' || command[0] == 'D') && (command[5] == 'd' || command[5] == 'D'))
+				{
+					wprintw(display, "\nConnected successfully.\n");
+					fourthWirePair = TRUE;
+				}
+				else if(command[2] == 't' && command[3] == 'o')
+					wprintw(display, "\nThis is not a valid connection. Try again.\n");
+				if(firstWirePair && secondWirePair && thirdWirePair && fourthWirePair)
+				{
+						wirePanelFixed = TRUE;
+						wprintw(display, "\nThe wire panel is now fixed and operational. Nice job.\n");
+						electrical();
+				}
 				break;
 		}
 		wrefresh(display);
