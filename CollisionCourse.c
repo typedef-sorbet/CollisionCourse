@@ -144,9 +144,9 @@ void bedroom()
 		wborder(textWindow, '|', '|', '-', '-', '+', '+', '+', '+');
 		wrefresh(textWindow);
 		
-		attron(COLOR_PAIR(1));
+		wattron(display, COLOR_PAIR(1));
 		wprintw(display, "\n\t%s\n", command);
-		attroff(COLOR_PAIR(1));
+		wattroff(display, COLOR_PAIR(1));
 		
 		char token = getCardinalDirection(command);
 		switch(token)
@@ -242,9 +242,9 @@ void controlRoom()
 		wborder(textWindow, '|', '|', '-', '-', '+', '+', '+', '+');
 		wrefresh(textWindow);
 		
-		attron(COLOR_PAIR(1));
+		wattron(display, COLOR_PAIR(1));
 		wprintw(display, "\n\t%s\n", command);
-		attroff(COLOR_PAIR(1));
+		wattroff(display, COLOR_PAIR(1));
 		
 		char token = getCardinalDirection(command);
 		switch(token)
@@ -297,9 +297,9 @@ void controlPanel()
 		wborder(textWindow, '|', '|', '-', '-', '+', '+', '+', '+');
 		wrefresh(textWindow);
 		
-		attron(COLOR_PAIR(1));
+		wattron(display, COLOR_PAIR(1));
 		wprintw(display, "\n\t%s\n", command);
-		attroff(COLOR_PAIR(1));
+		wattroff(display, COLOR_PAIR(1));
 		
 		if(command[0] == 'A' || command[0] == 'a')
 		{
@@ -355,9 +355,9 @@ void wirePanel()
 		wborder(textWindow, '|', '|', '-', '-', '+', '+', '+', '+');
 		wrefresh(textWindow);
 		
-		attron(COLOR_PAIR(1));
+		wattron(display, COLOR_PAIR(1));
 		wprintw(display, "\n\t%s\n", command);
-		attroff(COLOR_PAIR(1));
+		wattroff(display, COLOR_PAIR(1));
 		
 		char token = getCardinalDirection(command);
 		switch(token)
@@ -437,9 +437,9 @@ void hatch()
 		wborder(textWindow, '|', '|', '-', '-', '+', '+', '+', '+');
 		wrefresh(textWindow);
 		
-		attron(COLOR_PAIR(1));
+		wattron(display, COLOR_PAIR(1));
 		wprintw(display, "\n\t%s\n", command);
-		attroff(COLOR_PAIR(1));
+		wattroff(display, COLOR_PAIR(1));
 		
 		char token = getCardinalDirection(command);
 		switch(token)
@@ -485,9 +485,9 @@ void cargo()
 		wborder(textWindow, '|', '|', '-', '-', '+', '+', '+', '+');
 		wrefresh(textWindow);
 		
-		attron(COLOR_PAIR(1));
+		wattron(display, COLOR_PAIR(1));
 		wprintw(display, "\n\t%s\n", command);
-		attroff(COLOR_PAIR(1));
+		wattroff(display, COLOR_PAIR(1));
 		
 		char token = getCardinalDirection(command);
 		switch(token)
@@ -550,9 +550,9 @@ void engine()
 		wborder(textWindow, '|', '|', '-', '-', '+', '+', '+', '+');
 		wrefresh(textWindow);
 		
-		attron(COLOR_PAIR(1));
+		wattron(display, COLOR_PAIR(1));
 		wprintw(display, "\n\t%s\n", command);
-		attroff(COLOR_PAIR(1));
+		wattroff(display, COLOR_PAIR(1));
 		
 		char token = getCardinalDirection(command);
 		switch(token)
@@ -623,9 +623,9 @@ void messHall()
 		wborder(textWindow, '|', '|', '-', '-', '+', '+', '+', '+');
 		wrefresh(textWindow);
 		
-		attron(COLOR_PAIR(1));
+		wattron(display, COLOR_PAIR(1));
 		wprintw(display, "\n\t%s\n", command);
-		attroff(COLOR_PAIR(1));
+		wattroff(display, COLOR_PAIR(1));
 		
 		char token = getCardinalDirection(command);
 		switch(token)
@@ -690,9 +690,9 @@ void electrical()
 		wborder(textWindow, '|', '|', '-', '-', '+', '+', '+', '+');
 		wrefresh(textWindow);
 		
-		attron(COLOR_PAIR(1));
+		wattron(display, COLOR_PAIR(1));
 		wprintw(display, "\n\t%s\n", command);
-		attroff(COLOR_PAIR(1));
+		wattroff(display, COLOR_PAIR(1));
 		
 		char token = getCardinalDirection(command);
 		switch(token)
