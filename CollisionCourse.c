@@ -27,7 +27,7 @@ bool bedroomFirst = TRUE, controlFirst = TRUE, hatchFirst = TRUE;
 char command[30];
 	
 
-Inventory inv = {{"Clothes", "What you're wearing.", "Wrench", "The most basic of tools."},  999, 2};
+Inventory inv = {{}, 0};
 
 WINDOW *textWindow;
 WINDOW *display;
@@ -244,11 +244,12 @@ void hatch()
 
 void drawInv()
 {
-	wmove(invWin, 1, 1);
-	int invCursor = 1;
-	while(invCursor <= inv.numItems)
+	mvwprintw(invWin, 1, 1, "Inventory");
+	wmove(invWin, 3, 1);
+	int invCursor = 3;
+	while(invCursor <= inv.numItems+2)
 	{
-			wprintw(invWin, inv.items[invCursor-1].name);
+			wprintw(invWin, inv.items[invCursor-3].name);
 			wmove(invWin, ++invCursor, 1);
 	}
 	wrefresh(invWin);
