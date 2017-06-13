@@ -9,6 +9,7 @@
 void drawInv();
 void drawMap(char *, char *, char *, char *, char *, char *);
 int checkForItem(char *);
+void removeItem(char*);
 char getCardinalDirection(char *str);
 void bedroom();
 void controlRoom();
@@ -16,12 +17,13 @@ void hatch();
 void addItem(char*, char*);
 void examineItem(char*);
 char* toLowerCase(char*);
+void messHall();
 
 int max_x, max_y;
 int display_y, display_x, text_y, text_x, map_y, map_x, inv_y, inv_x;
 
 //a BUNCH of gamestate flags
-bool bedroomFirst = TRUE, controlFirst = TRUE, hatchFirst = TRUE;
+bool bedroomFirst = TRUE, controlFirst = TRUE, hatchFirst = TRUE, messHallFirst = TRUE;
 
 //buffer for commands and text
 char command[30];
@@ -111,12 +113,12 @@ void bedroom()
 	drawMap(NULL, "Control Room", NULL, NULL, "Debug Message" , NULL);
 	if(bedroomFirst)
 	{
-		wprintw(display, "You awaken with a start under the covers of your bed.\nThis would not be unusual, if it weren't for the fact that there was a large\n\"COLLISION COURSE ALERT\" alarm blaring in the background.\n");
+		wprintw(display, "You awaken with a start under the covers of your bed.\nThis would not be unusual, if it weren't for the fact that there was a large\n\"COLLISION COURSE ALERT\" alarm blaring in the background.\nOh well. there was something horribly uncomfortable about the pillow anyways.\n");
 		bedroomFirst = FALSE;
 	}
 	while(1)
 	{
-		wprintw(display, "To the south is the control room. A ladder leads upwards to a debug message.\n");
+		wprintw(display, "\nA nightstand sits next to the bed pod, only inches away from the pillow.\nTo the south is the control room. A ladder leads upwards to a debug message.\n");
 		wrefresh(display);
 		wmove(textWindow, 1, 1);
 		wgetnstr(textWindow, command, 30);
@@ -150,8 +152,22 @@ void bedroom()
 					wprintw(display, "\nLadders aren't good for interior decoration, you know.\n");
 				if(strstr(command, "look") != NULL && strstr(command, "pillow") != NULL)
 				{
-					wprintw(display, "\nYou find a silvery key hiding underneath the pillow.\n");
-					addItem("Silver Key", "A key with a silver finish. Found under your pillow.");
+					if(checkForItem("Silver Key") == -1)
+					{
+						wprintw(display, "\nYou find a silvery key hiding underneath the pillow.\n");
+						addItem("Silver Key", "A key with a silver finish. Found under your pillow.");
+					}
+					else
+						wprintw(display, "\nYou look under the pillow once more, but only find lint and disappointment.\n");
+				}
+				if(strstr(command, "look") != NULL && strstr(command, "nightstand") != NULL)
+				{
+					wprintw(display, "\nAn empty plastic cup sits atop the metal nightstand.\n");
+				}
+				if(strstr(command, "cup") != NULL && checkForItem("Cup") == -1)
+				{
+					wprintw(display, "\nGotten.\n");
+					addItem("Cup", "A small plastic cup. Good for holding things.");
 				}
 				break;
 		}
@@ -182,7 +198,7 @@ void controlRoom()
 		switch(token)
 		{
 			case 'e':
-				wprintw(display, "\nThis room is currently incomplete.\nConveniently enough for the dev, the door is locked, so you can't enter anyway.\nSorry about that.\n");
+				messHall();
 				break;
 			case 'n':
 				bedroom();
@@ -242,6 +258,69 @@ void hatch()
 	}
 }
 
+void messHall()
+{
+	wprintw(display, "\n");
+	drawMap("Engineering Room", NULL, NULL, "Control Room", NULL, NULL);
+	if(messHallFirst)
+	{
+		wprintw(display, "\nThe mess hall is a complete mess. How apt.\n");
+		messHallFirst = FALSE;
+	}
+	while(1)
+	{
+		wprintw(display, "\nIn the corner sits a machine labeled \"Food\". To the north is the engineering room, and to the\nwest is the control room.\n");
+		wrefresh(display);
+		wmove(textWindow, 1, 1);
+		wgetnstr(textWindow, command, 30);
+		wclear(textWindow);
+		wborder(textWindow, '|', '|', '-', '-', '+', '+', '+', '+');
+		wrefresh(textWindow);
+		
+		char token = getCardinalDirection(command);
+		switch(token)
+		{
+			case 'n':
+				//engineering();
+				break;
+			case 's':
+				break;
+			case 'e':
+				break;
+			case 'w':
+				controlRoom();
+				break;
+			case 'u':
+				break;
+			case 'd':
+				break;
+			case 'q':
+				endwin();
+				exit(0);
+			default:		//additional checks
+				if(strstr(command, "machine") != NULL)
+				{
+					int index;
+					if((index = checkForItem("Cup")) != -1)
+					{
+						if(checkForItem("Cup w/ Slime") == -1)
+						{
+							wprintw(display, "\nYou put some slimy food into the cup.\n");
+							removeItem("Cup");
+							addItem("Cup w/ Slime", "A plastic cup containing a slimy substance described as food.");
+						}
+					}
+					else if(checkForItem("Cup w/ Slime") != -1)
+						wprintw(display, "\nWhat, you want to carry around MORE slime?\n");
+					else
+						wprintw(display, "\nYou pull the lever on the machine, and slimy, gross goop begins to pour on the ground.\n");
+				}
+				break;
+		}
+		wrefresh(display);
+	}
+}
+
 void drawInv()
 {
 	mvwprintw(invWin, 1, 1, "Inventory");
@@ -253,6 +332,18 @@ void drawInv()
 			wmove(invWin, ++invCursor, 1);
 	}
 	wrefresh(invWin);
+}
+
+void removeItem(char *itemName)
+{
+	int indexOfItem = checkForItem(itemName);
+	if(indexOfItem == -1)
+		return;
+	for(indexOfItem; indexOfItem < inv.numItems; indexOfItem++)
+	{
+			inv.items[indexOfItem] = inv.items[indexOfItem+1];
+	}
+	inv.numItems--;
 }
 
 //should the indexes be hardcoded? no.
@@ -332,13 +423,13 @@ char getCardinalDirection(char *str)
 		return 'e';
 	if(strstr(str, "west") != NULL || ((str[0] == 'w') && (str[1] == '\0')))
 		return 'w';
-	if(strstr(str, "up") != NULL || ((str[0] == 'u') && (str[1] == '\0')))
+	if((strstr(str, "up") != NULL && strstr(str, "cup") == NULL) || ((str[0] == 'u') && (str[1] == '\0')))
 		return 'u';
 	if(strstr(str, "down") != NULL || ((str[0] == 'd') && (str[1] == '\0')))
 		return 'd';
 	if(strstr(str, "quit") != NULL)
 		return 'q';
-	if(strstr(str, "examine") != NULL)
+	if(strstr(str, " examine ") != NULL)
 		examineItem(str);
 	return 'z';	
 }
