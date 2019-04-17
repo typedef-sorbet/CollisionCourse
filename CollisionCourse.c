@@ -29,6 +29,10 @@ int display_y, display_x, text_y, text_x, map_y, map_x, inv_y, inv_x;
 
 // function pointer to the current room
 void (*currentRoom)(void);
+// function pointer to the previous room (used for checks against currentRoom; never called)
+void (*previousRoom)(void);
+
+bool isEntry;
 
 //a BUNCH of gamestate flags
 bool wireFirst = TRUE, cargoFirst = TRUE, engineFirst = TRUE, electricalFirst = TRUE, bedroomFirst = TRUE, controlFirst = TRUE, hatchFirst = TRUE, messHallFirst = TRUE, controlPanelFirst = TRUE;
@@ -99,9 +103,24 @@ int main()
 
 	currentRoom = bedroom;
 	
+
+	// Main game loop
 	while(1)
 	{
+		previousRoom = currentRoom;
+
 		currentRoom();
+
+		// room has now completed execution
+		// check room state to see if we should print the room's entry text, or keep things simple and clean
+		if(currentRoom == previousRoom)
+		{
+			isEntry = false;
+		}
+		else
+		{
+			isEntry = true;
+		}
 	}
 	
 	/*while(1)
@@ -345,7 +364,9 @@ void wirePanel()
 		wireFirst = FALSE;
 	}
 
-	wprintw(display, "\nThe wires are still not fully connected.\nUse the syntax \"C to A\" to connect the third wire on the left to the first wire on\nthe right, for example.\n");
+	wprintw(display, "\nThe wires are still not fully connected.\n");
+	if(isEntry)
+		wprintw(display, "\nUse the syntax \"C to A\" to connect the third wire on the left to the first wire on\nthe right, for example.\n");
 	wrefresh(display);
 	wmove(textWindow, 1, 1);
 	wgetnstr(textWindow, command, 30);
